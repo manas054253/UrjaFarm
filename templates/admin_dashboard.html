@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - SmartCredit{% endblock %}
+
+{% block content %}
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .stat-box {
+        background: rgba(255,255,255,0.15);
+        padding: 1rem;
+        border-radius: 10px;
+        border: 2px solid rgba(255,255,255,0.2);
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        opacity: 0.9;
+    }
+
+    .filters-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.2rem;
+        border: 2px solid #e1e8ed;
+        background: white;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .filter-btn:hover {
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .filter-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+    }
+
+    .applications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .app-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        border-top: 4px solid #667eea;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .app-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    .app-card.risk-low {
+        border-top-color: #00d4aa;
+    }
+
+    .app-card.risk-medium {
+        border-top-color: #ffd93d;
+    }
+
+    .app-card.risk-high {
+        border-top-color: #ff6b6b;
+    }
+
+    .app-card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #eef1f8 100%);
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .app-applicant-info h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+        color: var(--text-dark);
+    }
+
+    .app-applicant-info p {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        margin: 0.2rem 0;
+    }
+
+    .score-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .score-badge-number {
+        font-size: 1.8rem;
+    }
+
+    .score-badge-label {
+        font-size: 0.7rem;
+    }
+
+    .app-card-body {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .app-metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .metric {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .metric-label {
+        font-size: 0.75rem;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+
+    .metric-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .risk-indicator {
+        display: inline-block;
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .risk-low-badge {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .risk-medium-badge {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .risk-high-badge {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .app-card-footer {
+        padding: 1.5rem;
+        border-top: 1px solid #e1e8ed;
+        display: flex;
+        gap: 1rem;
+        margin-top: auto;
+    }
+
+    .view-btn {
+        flex: 1;
+        padding: 0.8rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .view-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+        color: #7f8c8d;
+    }
+
+    @media (max-width: 768px) {
+        .applications-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-header {
+            padding: 1.5rem 1rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .filters-section {
+            flex-direction: column;
+        }
+
+        .app-card-header {
+            flex-direction: column;
+        }
+
+        .score-badge {
+            width: 60px;
+            height: 60px;
+        }
+    }
+</style>
+
+<!-- Page Header with Stats -->
+<div class="page-header">
+    <h1 class="page-title">🏦 Loan Applications</h1>
+    <p class="page-subtitle">Review and manage all MSME credit applications</p>
+    
+    <div class="stats-container">
+        <div class="stat-box">
+            <div class="stat-number">{{ applications|length }}</div>
+            <div class="stat-label">Total Apps</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ applications|selectattr('risk_status', 'equalto', 'Low Risk')|list|length }}</div>
+            <div class="stat-label">Low Risk</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ applications|selectattr('risk_status', 'equalto', 'Medium Risk')|list|length }}</div>
+            <div class="stat-label">Medium Risk</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ applications|selectattr('risk_status', 'equalto', 'High Risk')|list|length }}</div>
+            <div class="stat-label">High Risk</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="filters-section">
+    <span style="font-weight: 600; color: var(--text-dark);">Filter by Risk:</span>
+    <div class="filter-group">
+        <button class="filter-btn active" onclick="filterCards('all')">All</button>
+        <button class="filter-btn" onclick="filterCards('low')">✅ Low Risk</button>
+        <button class="filter-btn" onclick="filterCards('medium')">⚠️ Medium Risk</button>
+        <button class="filter-btn" onclick="filterCards('high')">🚨 High Risk</button>
+    </div>
+</div>
+
+{% if applications %}
+<!-- Applications Grid -->
+<div class="applications-grid" id="applicationsGrid">
+    {% for app in applications %}
+    <div class="app-card {% if app.risk_status == 'Low Risk' %}risk-low{% elif app.risk_status == 'Medium Risk' %}risk-medium{% else %}risk-high{% endif %}" data-risk="{{ app.risk_status.lower().replace(' ', '-') }}">
+        
+        <!-- Card Header -->
+        <div class="app-card-header">
+            <div class="app-applicant-info">
+                <h3>{{ app.applicant.name }}</h3>
+                <p>{{ app.applicant.email }}</p>
+                <p style="font-size: 0.8rem; color: #999;">{{ app.timestamp.strftime('%b %d, %Y') }}</p>
+            </div>
+            <div class="score-badge">
+                <div class="score-badge-number">{{ app.credit_score }}</div>
+                <div class="score-badge-label">Score</div>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="app-card-body">
+            <!-- Risk Status -->
+            {% if app.risk_status == 'Low Risk' %}
+                <span class="risk-indicator risk-low-badge">✅ {{ app.risk_status }}</span>
+            {% elif app.risk_status == 'Medium Risk' %}
+                <span class="risk-indicator risk-medium-badge">⚠️ {{ app.risk_status }}</span>
+            {% else %}
+                <span class="risk-indicator risk-high-badge">🚨 {{ app.risk_status }}</span>
+            {% endif %}
+
+            <!-- Metrics -->
+            <div class="app-metrics">
+                <div class="metric">
+                    <div class="metric-label">Daily Sales</div>
+                    <div class="metric-value">₹{{ "{:,.0f}".format(app.avg_daily_sales|default(0)) }}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Recharge</div>
+                    <div class="metric-value">₹{{ "{:,.0f}".format(app.avg_monthly_recharge|default(0)) }}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Bills On Time</div>
+                    <div class="metric-value">{{ app.bills_paid_on_time_12m|default('N/A') }}/12</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Days No Sales</div>
+                    <div class="metric-value">{{ app.days_with_no_sales|default('N/A') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="app-card-footer">
+            <a href="{{ url_for('view_application', app_id=app.id) }}" class="view-btn">
+                View Full Details →
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<!-- Empty State -->
+<div class="empty-state">
+    <div class="empty-icon">📭</div>
+    <div class="empty-title">No Applications Found</div>
+    <div class="empty-text">New MSME credit applications will appear here.</div>
+</div>
+{% endif %}
+
+<script>
+    function filterCards(riskLevel) {
+        const cards = document.querySelectorAll('.app-card');
+        
+        // Update button states
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Filter cards
+        cards.forEach(card => {
+            if (riskLevel === 'all') {
+                card.style.display = '';
+            } else {
+                const dataRisk = card.getAttribute('data-risk');
+                if (dataRisk === 'low-risk' && riskLevel === 'low') {
+                    card.style.display = '';
+                } else if (dataRisk === 'medium-risk' && riskLevel === 'medium') {
+                    card.style.display = '';
+                } else if (dataRisk === 'high-risk' && riskLevel === 'high') {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Applicant Dashboard - SmartCredit{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header p {
+        opacity: 0.95;
+        font-size: 1.1rem;
+    }
+
+    .application-form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 3rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-text {
+        background: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+    }
+
+    .submit-section {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e1e8ed;
+        text-align: center;
+    }
+
+    .submit-section .btn {
+        padding: 1rem 3rem;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="dashboard-header">
+    <h1>👋 Welcome, {{ session.get('applicant_name', 'Applicant') }}!</h1>
+    <p>Submit your MSME credit application and get instant AI-powered assessment</p>
+</div>
+
+<div class="application-form-card">
+    <div class="info-text">
+        <strong>ℹ️ Quick Guide:</strong> Fill out all required fields below. Our AI model will analyze your data to generate a comprehensive credit report. The process takes less than 5 minutes!
+    </div>
+
+    <form method="POST" action="{{ url_for('predict') }}">
+        <!-- Payment History Section -->
+        <div class="form-section">
+            <h2 class="form-section-title">📋 Payment History</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="bills_paid_on_time_12m" class="form-label">Bills Paid On Time (12 months)</label>
+                    <input type="number" id="bills_paid_on_time_12m" name="bills_paid_on_time_12m" class="form-control" required min="0" max="12" placeholder="e.g., 11">
+                </div>
+                <div class="form-group">
+                    <label for="avg_bill_amount" class="form-label">Average Bill Amount (₹)</label>
+                    <input type="number" id="avg_bill_amount" name="avg_bill_amount" class="form-control" required min="0" step="0.01" placeholder="e.g., 500.50">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="is_bill_overdue_30d" class="form-label">Bill Overdue 30+ Days?</label>
+                    <select id="is_bill_overdue_30d" name="is_bill_overdue_30d" class="form-control" required>
+                        <option value="">-- Select --</option>
+                        <option value="0">No (0)</option>
+                        <option value="1">Yes (1)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile & Digital Data Section -->
+        <div class="form-section">
+            <h2 class="form-section-title">📱 Mobile & Digital Data</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="mobile_age_years" class="form-label">Mobile Account Age (years)</label>
+                    <input type="number" id="mobile_age_years" name="mobile_age_years" class="form-control" required min="0" max="50" placeholder="e.g., 5">
+                </div>
+                <div class="form-group">
+                    <label for="avg_monthly_recharge" class="form-label">Average Monthly Recharge (₹)</label>
+                    <input type="number" id="avg_monthly_recharge" name="avg_monthly_recharge" class="form-control" required min="0" step="0.01" placeholder="e.g., 200.00">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales & Business Data Section -->
+        <div class="form-section">
+            <h2 class="form-section-title">📊 Sales & Business Data</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="avg_daily_sales" class="form-label">Average Daily Sales (₹)</label>
+                    <input type="number" id="avg_daily_sales" name="avg_daily_sales" class="form-control" required min="0" step="0.01" placeholder="e.g., 2000.00">
+                </div>
+                <div class="form-group">
+                    <label for="days_with_no_sales" class="form-label">Days with No Sales (30-day period)</label>
+                    <input type="number" id="days_with_no_sales" name="days_with_no_sales" class="form-control" required min="0" max="30" placeholder="e.g., 2">
+                </div>
+            </div>
+        </div>
+
+        <div class="submit-section">
+            <button type="submit" class="btn btn-primary">🚀 Submit Application for Review</button>
+            <p style="margin-top: 1rem; color: #7f8c8d; font-size: 0.9rem;">
+                By submitting, you agree to our terms of service and privacy policy
+            </p>
+        </div>
+    </form>
+</div>
+{% endblock %}

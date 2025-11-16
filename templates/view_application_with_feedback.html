@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+
+{% block title %}Application Details - SmartCredit{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<style>
+    :root {
+        --primary: #667eea;
+        --primary-dark: #764ba2;
+        --success: #00d4aa;
+        --warning: #ffd93d;
+        --danger: #ff6b6b;
+        --text-dark: #1a202c;
+        --text-light: #718096;
+        --white: #ffffff;
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    }
+
+    .main-panel {
+        max-width: 1300px;
+        margin: 2rem auto;
+        background: var(--white);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 2.5rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 2rem;
+    }
+
+    .hero-section {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 3rem;
+        align-items: center;
+        margin-bottom: 2.5rem;
+        padding-bottom: 2.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .hero-left h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .score-card {
+        width: 180px;
+        height: 180px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.25);
+        position: relative;
+    }
+
+    .score-number {
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .score-label {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        opacity: 0.9;
+    }
+
+    .risk-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 0.7rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .risk-low { background: var(--success); color: white; }
+    .risk-medium { background: var(--warning); color: #333; }
+    .risk-high { background: var(--danger); color: white; }
+
+    .charts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.8rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .chart-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(255, 255, 255) 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 15px;
+        padding: 1.8rem;
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .chart-canvas {
+        position: relative;
+        height: 240px;
+        margin-bottom: 1rem;
+    }
+
+    /* === OFFICER DECISION FORM === */
+    .decision-section {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2.5rem;
+    }
+
+    .decision-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .feedback-form {
+        margin-bottom: 2rem;
+    }
+
+    .feedback-label {
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.8rem;
+        display: block;
+        font-size: 1rem;
+    }
+
+    .feedback-textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        resize: vertical;
+        min-height: 100px;
+        margin-bottom: 1.5rem;
+    }
+
+    .feedback-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .decision-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .btn-decision {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+    }
+
+    .btn-approve {
+        background: var(--success);
+        color: white;
+    }
+
+    .btn-approve:hover {
+        background: #00b894;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 212, 170, 0.3);
+    }
+
+    .btn-reject {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-reject:hover {
+        background: #ff5252;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn-info {
+        background: var(--warning);
+        color: #333;
+    }
+
+    .btn-info:hover {
+        background: #ffc107;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            grid-template-columns: 1fr;
+        }
+
+        .charts-container {
+            grid-template-columns: 1fr;
+        }
+
+        .decision-buttons {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<a href="{{ url_for('admin_dashboard') }}" class="back-link">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+</a>
+
+<div class="main-panel">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-left">
+            <h1>{{ app.applicant.name }}</h1>
+            <p style="color: var(--text-light);">{{ app.applicant.email }}</p>
+            <p style="font-size: 0.85rem; color: #a0aec0;">Submitted on {% if app.timestamp %}{{ app.timestamp.strftime('%B %d, %Y') }}{% else %}N/A{% endif %}</p>
+        </div>
+
+        <div class="score-card">
+            <div class="score-number">{{ app.credit_score }}</div>
+            <div class="score-label">/ 1000</div>
+            <div class="risk-badge {% if app.risk_status == 'Low Risk' %}risk-low{% elif app.risk_status == 'Medium Risk' %}risk-medium{% else %}risk-high{% endif %}">
+                {% if app.risk_status == 'Low Risk' %}✅ Low{% elif app.risk_status == 'Medium Risk' %}⚠️ Medium{% else %}🚨 High{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-container">
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="fas fa-chart-pie" style="color: var(--primary);"></i> Payment Consistency
+            </div>
+            <div class="chart-canvas">
+                <canvas id="paymentChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="fas fa-chart-bar" style="color: var(--primary);"></i> Performance
+            </div>
+            <div class="chart-canvas">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="fas fa-heart" style="color: var(--primary);"></i> Financial Health
+            </div>
+            <div class="chart-canvas">
+                <canvas id="healthChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- DECISION SECTION -->
+    <div class="decision-section">
+        <div class="decision-title">
+            <i class="fas fa-gavel"></i> Make a Decision
+        </div>
+
+        {% if app.status != 'Pending' %}
+        <div style="background: #f0f4ff; border-left: 4px solid var(--primary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <p style="font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">
+                ✓ Decision Already Made
+            </p>
+            <p style="color: var(--text-dark);">
+                Status: <strong>{{ app.status }}</strong>
+            </p>
+            <p style="color: var(--text-light); margin-top: 0.5rem;">{{ app.officer_feedback }}</p>
+        </div>
+        {% else %}
+        <form method="POST" id="decisionForm" onsubmit="submitDecision(event)">
+            <div class="feedback-form">
+                <label class="feedback-label">
+                    <i class="fas fa-comment"></i> Officer Comments/Reason (Required)
+                </label>
+                <textarea 
+                    name="feedback" 
+                    class="feedback-textarea" 
+                    required
+                    placeholder="Please provide your detailed feedback/reason for this decision..."></textarea>
+            </div>
+
+            <div class="decision-buttons">
+                <button type="button" class="btn-decision btn-approve" onclick="submitWithType('approve')">
+                    <i class="fas fa-check-circle"></i> Approve
+                </button>
+                <button type="button" class="btn-decision btn-info" onclick="submitWithType('more_info')">
+                    <i class="fas fa-question-circle"></i> Request Info
+                </button>
+                <button type="button" class="btn-decision btn-reject" onclick="submitWithType('reject')">
+                    <i class="fas fa-times-circle"></i> Reject
+                </button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Chart setup
+    const colors = {
+        primary: '#667eea',
+        success: '#00d4aa',
+        warning: '#ffd93d',
+        light: '#e2e8f0'
+    };
+
+    // Payment Chart
+    const paymentCtx = document.getElementById('paymentChart').getContext('2d');
+    new Chart(paymentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['On Time', 'Missed'],
+            datasets: [{
+                data: [{{ app.bills_paid_on_time_12m }}, {{ 12 - app.bills_paid_on_time_12m }}],
+                backgroundColor: [colors.success, colors.light],
+                borderRadius: 8,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { font: { size: 12, weight: 'bold' }, padding: 20 }
+                }
+            }
+        }
+    });
+
+    // Performance Chart
+    const perfCtx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(perfCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Daily Sales', 'Monthly Recharge', 'Mobile Age'],
+            datasets: [{
+                data: [
+                    Math.min({{ app.avg_daily_sales|default(0) / 500 }}, 100),
+                    Math.min({{ app.avg_monthly_recharge|default(0) / 50 }}, 100),
+                    {{ app.mobile_age_years * 10 }}
+                ],
+                backgroundColor: [colors.primary, colors.success, colors.warning],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true, max: 100, ticks: { display: false }, grid: { display: false } }
+            }
+        }
+    });
+
+    // Health Chart
+    const healthCtx = document.getElementById('healthChart').getContext('2d');
+    new Chart(healthCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Payment', 'Sales', 'Stability', 'Digital', 'Activity'],
+            datasets: [{
+                data: [
+                    {{ (app.bills_paid_on_time_12m / 12) * 100 }},
+                    Math.min({{ (app.avg_daily_sales|default(0) / 500) }}, 100),
+                    Math.min(100 - ({{ app.days_with_no_sales }} * 5), 100),
+                    Math.min({{ app.mobile_age_years * 15 }}, 100),
+                    Math.min({{ app.avg_monthly_recharge|default(0) / 10 }}, 100)
+                ],
+                borderColor: colors.primary,
+                backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                pointBackgroundColor: colors.primary,
+                pointBorderColor: 'white',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: { beginAtZero: true, max: 100, ticks: { stepSize: 25 }, grid: { color: 'rgba(0,0,0,0.05)' } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Form submission handlers
+    function submitWithType(type) {
+        const form = document.getElementById('decisionForm');
+        const feedback = document.querySelector('textarea[name="feedback"]').value.trim();
+
+        if (!feedback) {
+            alert('Please provide feedback/reason for your decision.');
+            return;
+        }
+
+        let route = '';
+        if (type === 'approve') {
+            route = "{{ url_for('approve_application', app_id=app.id) }}";
+        } else if (type === 'reject') {
+            route = "{{ url_for('reject_application', app_id=app.id) }}";
+        } else if (type === 'more_info') {
+            route = "{{ url_for('request_more_info', app_id=app.id) }}";
+        }
+
+        // Create a hidden form and submit
+        const hiddenForm = document.createElement('form');
+        hiddenForm.method = 'POST';
+        hiddenForm.action = route;
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'feedback';
+        input.value = feedback;
+
+        hiddenForm.appendChild(input);
+        document.body.appendChild(hiddenForm);
+        hiddenForm.submit();
+    }
+</script>
+{% endblock %}

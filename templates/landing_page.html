@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCredit - AI-Powered MSME Credit Scoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.95rem;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .stats {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-item h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #333;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            text-align: center;
+            color: #666;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: #667eea;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .step h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+
+        .step p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .benefits-section {
+            background: #f8f9fa;
+        }
+
+        .benefits-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .benefit-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .benefit-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .benefit-content p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .testimonial {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid #667eea;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .testimonial-role {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .faq-section {
+            background: #f8f9fa;
+        }
+
+        .faq-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            background: white;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .faq-question:hover {
+            background: #f0f0f0;
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 1.5rem;
+            border-top: 1px solid #eee;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-top: 3rem;
+            border-radius: 10px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">💳 SmartCredit</div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#process">How It Works</a>
+                <a href="#benefits">Benefits</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Unlock Your Business's Credit Potential</h1>
+            <p>Secure, AI-powered credit scoring that analyzes traditional and non-traditional data. Get a complete financial picture in minutes.</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('register') }}" class="btn btn-primary">Apply Now</a>
+                <a href="#process" class="btn btn-secondary">Learn More</a>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <h3>10,000+</h3>
+                    <p>MSMEs Funded</p>
+                </div>
+                <div class="stat-item">
+                    <h3>99.9%</h3>
+                    <p>Uptime & Reliability</p>
+                </div>
+                <div class="stat-item">
+                    <h3>5 Min</h3>
+                    <p>Application Time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <h2 class="section-title">A Smarter, Faster Way to Assess Credit</h2>
+        <p class="section-subtitle">We look beyond traditional scores to find your true creditworthiness</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Non-Traditional Data</h3>
+                <p>Integrate utility payments, mobile usage, and sales data to build a complete profile of your business stability.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Fair</h3>
+                <p>Our AI model is built to be unbiased, providing a fair assessment for all applicants with bank-level encryption.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Decisions</h3>
+                <p>Our officers receive an interactive visual report, allowing them to act fast and approve deserving MSMEs quickly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="section">
+        <h2 class="section-title">Get Your Report in 3 Simple Steps</h2>
+        <p class="section-subtitle">From application to approval in minutes</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Apply in Minutes</h3>
+                <p>Submit your basic info and non-traditional data sources securely through our mobile-friendly platform.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Run AI Assessment</h3>
+                <p>Our model analyzes thousands of data points to find patterns and verify your business stability instantly.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Receive Full Report</h3>
+                <p>Your application is sent to a loan officer with a complete visual dashboard and AI-generated insights.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section benefits-section">
+        <h2 class="section-title">Reduce Risk, Increase Approvals</h2>
+        <p class="section-subtitle">Our platform empowers your team to make faster, fairer, and more accurate decisions</p>
+        <div class="benefits-list">
+            <div class="benefit-item">
+                <div class="benefit-icon">🔍</div>
+                <div class="benefit-content">
+                    <h4>Explainable AI Dashboard</h4>
+                    <p>Access our visual XAI dashboard to see exactly why a credit score was given, building trust with applicants.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">⏱️</div>
+                <div class="benefit-content">
+                    <h4>Process in Minutes</h4>
+                    <p>Stop waiting weeks for decisions. Our system provides instant AI-powered recommendations to loan officers.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">📈</div>
+                <div class="benefit-content">
+                    <h4>Higher Accuracy Rates</h4>
+                    <p>Reduce default rates with a more predictive, holistic model that captures real business health, not old data.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">🌍</div>
+                <div class="benefit-content">
+                    <h4>Unlock New Markets</h4>
+                    <p>Access creditworthy MSMEs that traditional credit scores miss, expanding your loan portfolio safely.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">🛡️</div>
+                <div class="benefit-content">
+                    <h4>Bank-Level Security</h4>
+                    <p>All data is encrypted with SSL, stored securely, and never shared without explicit permission.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">📱</div>
+                <div class="benefit-content">
+                    <h4>Mobile-First Design</h4>
+                    <p>Apply from anywhere with our responsive mobile app, perfect for busy entrepreneurs on the go.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section">
+        <h2 class="section-title">What Our Users Say</h2>
+        <p class="section-subtitle">Real stories from MSMEs and financial institutions</p>
+        <div class="testimonials">
+            <div class="testimonial">
+                <div class="testimonial-text">"For the first time, I was judged on my actual business, not an old, meaningless score. I got the loan I needed to expand my shop and hire more staff."</div>
+                <div class="testimonial-author">Ravi Patel</div>
+                <div class="testimonial-role">MSME Owner, Mumbai</div>
+            </div>
+            <div class="testimonial">
+                <div class="testimonial-text">"The visual dashboard is a game-changer. I can see payment history, sales consistency, and business trends in a glance. It's cut our review time in half."</div>
+                <div class="testimonial-author">Priya Sharma</div>
+                <div class="testimonial-role">Loan Officer, TechBank</div>
+            </div>
+            <div class="testimonial">
+                <div class="testimonial-text">"Secure, fast, and fair. This is the future of small business lending. We've unlocked a whole new market of deserving customers we couldn't serve before."</div>
+                <div class="testimonial-author">Anil Gupta</div>
+                <div class="testimonial-role">Head of Credit, FinSecure</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section faq-section">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item active">
+                <button class="faq-question">
+                    Is my financial data secure?
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    Yes, absolutely. All data is transferred over SSL encryption, and our database is fully encrypted at rest. We follow banking-grade security protocols. We never share your raw data with anyone without your explicit written permission, and compliance is audited regularly.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    What do you mean by "non-traditional data"?
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    Non-traditional data is any information outside traditional credit bureaus. We analyze things like: consistency of your utility payments, average daily sales from digital receipts, stability of your mobile phone usage, frequency of online transactions, and business growth trends. This gives a much clearer picture of your business health.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    How long does the process take?
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    Submitting your application takes about 5 minutes on our mobile app. Our AI model provides an instant credit score and report to the loan officer. Most applicants get a final decision within a few hours, not weeks like traditional lending. Some approvals happen within minutes.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Do I need a traditional credit score?
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    No. While we can integrate traditional credit data if available, our platform is specifically designed for MSMEs that may not have extensive credit histories. Even first-time applicants can get approved based on their business performance and payment consistency.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    What if I don't have digital payment history?
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    You can still apply! We can integrate multiple data sources including utility bills, telecom records, GST filings, bank statements, and even POS system data. The more data you provide, the more complete picture we get of your business health.
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    How much does it cost to apply?
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    Applying is completely free. There are no hidden charges or application fees. You only pay interest on any loan approved by your lender. Our scoring service adds value without adding cost to your application.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>Ready to See the Full Picture?</h2>
+        <p>Stop being judged by old data. Get the credit you deserve today.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-secondary">Start Your Free Application</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 SmartCredit - AI-Powered MSME Credit Scoring. All rights reserved.</p>
+        <p>Built with ❤️ to empower small businesses across India</p>
+    </footer>
+
+    <script>
+        // FAQ Accordion functionality
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const item = button.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                // Close all items
+                document.querySelectorAll('.faq-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

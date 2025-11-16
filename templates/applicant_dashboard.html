@@ -1,0 +1,528 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard - SmartCredit{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary: #667eea;
+        --primary-dark: #764ba2;
+        --success: #00d4aa;
+        --warning: #ffd93d;
+        --danger: #ff6b6b;
+        --text-dark: #1a202c;
+        --text-light: #718096;
+        --bg-light: #f7fafc;
+    }
+
+    .dashboard-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+
+    .welcome-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .welcome-header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-header p {
+        opacity: 0.95;
+        font-size: 1rem;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .tab-btn {
+        padding: 1rem 2rem;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--text-light);
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+
+    .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    .tab-btn:hover {
+        color: var(--primary);
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    /* === FORM SECTION === */
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+        font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 0.8rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 1rem 3rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    /* === STATUS SECTION === */
+    .status-timeline {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-pending {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .status-accepted {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-rejected {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .status-more-info {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .timeline-item {
+        padding: 1.5rem;
+        border-left: 4px solid #e2e8f0;
+        margin-bottom: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .timeline-item.active {
+        border-left-color: var(--primary);
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .timeline-label {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-note {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+
+    .officer-feedback {
+        background: #f0f4ff;
+        border-left: 4px solid var(--primary);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .officer-feedback-label {
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+
+    .officer-feedback-text {
+        font-size: 1rem;
+        color: var(--text-dark);
+        line-height: 1.8;
+    }
+
+    .response-form {
+        background: #fffbf0;
+        border: 2px solid var(--warning);
+        padding: 2rem;
+        border-radius: 12px;
+        margin-top: 2rem;
+    }
+
+    .response-form h3 {
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+    }
+
+    .response-textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .response-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .response-btn {
+        background: var(--warning);
+        color: #333;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+    }
+
+    .response-btn:hover {
+        background: #ffc107;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .tabs {
+            flex-direction: column;
+        }
+
+        .tab-btn {
+            border-bottom: none;
+            border-left: 4px solid transparent;
+            padding: 1rem 1.5rem;
+        }
+
+        .tab-btn.active {
+            border-left-color: var(--primary);
+            border-bottom: none;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .submit-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+        <h1>👋 Welcome, {{ session.get('applicant_name', 'Applicant') }}!</h1>
+        <p>Track your loan application status in real-time</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('form')">
+            <i class="fas fa-edit"></i> Application Form
+        </button>
+        <button class="tab-btn" onclick="switchTab('status')">
+            <i class="fas fa-clock"></i> Application Status
+        </button>
+    </div>
+
+    <!-- TAB 1: FORM (if no application submitted) -->
+    {% if mode == 'form' %}
+    <div id="form-tab" class="tab-content active">
+        <div class="form-card">
+            <form method="POST" action="{{ url_for('predict') }}">
+                <!-- Payment History -->
+                <div class="form-section">
+                    <h2 class="form-section-title">
+                        <i class="fas fa-credit-card"></i> Payment History
+                    </h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Bills Paid On Time (12 months)</label>
+                            <input type="number" name="bills_paid_on_time_12m" required min="0" max="12" placeholder="0-12">
+                        </div>
+                        <div class="form-group">
+                            <label>Average Bill Amount (₹)</label>
+                            <input type="number" name="avg_bill_amount" required min="0" step="0.01" placeholder="500.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Bill Overdue 30+ Days?</label>
+                            <select name="is_bill_overdue_30d" required>
+                                <option value="">Select...</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile & Digital -->
+                <div class="form-section">
+                    <h2 class="form-section-title">
+                        <i class="fas fa-mobile-alt"></i> Mobile & Digital
+                    </h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Mobile Account Age (years)</label>
+                            <input type="number" name="mobile_age_years" required min="0" max="50" placeholder="5">
+                        </div>
+                        <div class="form-group">
+                            <label>Average Monthly Recharge (₹)</label>
+                            <input type="number" name="avg_monthly_recharge" required min="0" step="0.01" placeholder="200.00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Data -->
+                <div class="form-section">
+                    <h2 class="form-section-title">
+                        <i class="fas fa-chart-bar"></i> Business Data
+                    </h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Average Daily Sales (₹)</label>
+                            <input type="number" name="avg_daily_sales" required min="0" step="0.01" placeholder="2000.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Days with No Sales (30-day)</label>
+                            <input type="number" name="days_with_no_sales" required min="0" max="30" placeholder="2">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Application
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 2: STATUS (if application submitted) -->
+    {% if mode == 'status' %}
+    <div id="status-tab" class="tab-content active">
+        <div class="status-timeline">
+            <!-- Current Status Badge -->
+            <div class="status-badge 
+                {% if app.status == 'Pending' %}status-pending
+                {% elif app.status == 'Accepted' %}status-accepted
+                {% elif app.status == 'Rejected' %}status-rejected
+                {% elif app.status == 'More Info Requested' %}status-more-info
+                {% endif %}">
+                
+                {% if app.status == 'Pending' %}
+                    <i class="fas fa-hourglass-half"></i> Pending Review
+                {% elif app.status == 'Accepted' %}
+                    <i class="fas fa-check-circle"></i> Accepted ✨
+                {% elif app.status == 'Rejected' %}
+                    <i class="fas fa-times-circle"></i> Rejected
+                {% elif app.status == 'More Info Requested' %}
+                    <i class="fas fa-exclamation-circle"></i> More Info Needed
+                {% endif %}
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline-item active">
+                <div class="timeline-label">Application Submitted</div>
+                <div class="timeline-value">{{ app.timestamp.strftime('%B %d, %Y at %I:%M %p') if app.timestamp else 'N/A' }}</div>
+                <div class="timeline-note">Credit Score: <strong>{{ app.credit_score }}/1000</strong></div>
+            </div>
+
+            {% if app.status != 'Pending' %}
+            <div class="timeline-item active">
+                <div class="timeline-label">Officer Decision</div>
+                <div class="timeline-value">{{ app.status }}</div>
+                <div class="timeline-note">Decided on: {{ app.decision_timestamp.strftime('%B %d, %Y') if app.decision_timestamp else 'Pending' }}</div>
+            </div>
+            {% endif %}
+
+            <!-- Officer Feedback -->
+            {% if app.officer_feedback %}
+            <div class="officer-feedback">
+                <div class="officer-feedback-label">📌 Officer's Message</div>
+                <div class="officer-feedback-text">{{ app.officer_feedback }}</div>
+            </div>
+            {% endif %}
+
+            <!-- Response Form (if More Info Requested) -->
+            {% if app.status == 'More Info Requested' %}
+            <div class="response-form">
+                <h3>📝 Please Provide Additional Information</h3>
+                <form method="POST" action="{{ url_for('submit_user_response', app_id=app.id) }}">
+                    <textarea name="user_response" class="response-textarea" required placeholder="Type your response or additional information here..."></textarea>
+                    <button type="submit" class="response-btn">
+                        <i class="fas fa-send"></i> Submit Response
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            <!-- User Response (if submitted) -->
+            {% if app.user_response %}
+            <div class="timeline-item">
+                <div class="timeline-label">Your Response</div>
+                <div class="timeline-value">Submitted on {{ app.response_timestamp.strftime('%B %d, %Y') if app.response_timestamp else 'N/A' }}</div>
+                <div class="timeline-note">{{ app.user_response }}</div>
+            </div>
+            {% endif %}
+
+            <!-- Status Actions -->
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+                {% if app.status == 'Accepted' %}
+                    <p style="color: var(--success); font-size: 1.1rem; font-weight: 700;">
+                        <i class="fas fa-check-circle"></i> Congratulations! Your application has been approved.
+                    </p>
+                    <p style="color: var(--text-light); margin-top: 1rem;">You will receive an email with next steps shortly.</p>
+                {% elif app.status == 'Rejected' %}
+                    <p style="color: var(--danger); font-size: 1.1rem; font-weight: 700;">
+                        <i class="fas fa-info-circle"></i> Unfortunately, your application was not approved.
+                    </p>
+                    <p style="color: var(--text-light); margin-top: 1rem;">Please review the officer's feedback above. You can contact support for more details.</p>
+                {% elif app.status == 'More Info Requested' %}
+                    <p style="color: var(--warning); font-size: 1.1rem; font-weight: 700;">
+                        <i class="fas fa-exclamation-circle"></i> Your application needs more information.
+                    </p>
+                    <p style="color: var(--text-light); margin-top: 1rem;">Please provide your response above to proceed with the review.</p>
+                {% else %}
+                    <p style="font-size: 1.1rem; font-weight: 700;">⏳ Your application is under review.</p>
+                    <p style="color: var(--text-light); margin-top: 1rem;">Our officers typically review applications within 24-48 hours. We'll notify you as soon as a decision is made.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Remove active from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Show selected tab
+        document.getElementById(tabName + '-tab').classList.add('active');
+        event.target.closest('.tab-btn').classList.add('active');
+    }
+</script>
+{% endblock %}

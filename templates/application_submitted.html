@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Application Submitted - SmartCredit{% endblock %}
+
+{% block content %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        text-align: center;
+    }
+
+    .success-card {
+        background: white;
+        border-radius: 15px;
+        padding: 4rem 3rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .success-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        animation: scaleIn 0.5s ease;
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+        }
+        to {
+            transform: scale(1);
+        }
+    }
+
+    .success-title {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .success-message {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        margin-bottom: 2rem;
+        line-height: 1.8;
+    }
+
+    .next-steps {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        margin: 2rem 0;
+        text-align: left;
+    }
+
+    .next-steps h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+    }
+
+    .next-steps ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .next-steps li {
+        padding: 0.8rem 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        border-bottom: 1px solid #e1e8ed;
+    }
+
+    .next-steps li:last-child {
+        border-bottom: none;
+    }
+
+    .step-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+        background: #667eea;
+        color: white;
+    }
+</style>
+
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon">🎉</div>
+        <h1 class="success-title">Application Submitted Successfully!</h1>
+        <p class="success-message">
+            Your credit application has been received and is now being processed by our AI system. 
+            A loan officer will review your complete profile shortly.
+        </p>
+
+        <div class="next-steps">
+            <h3>📋 What Happens Next?</h3>
+            <ul>
+                <li>
+                    <span class="step-icon">🤖</span>
+                    <div>
+                        <strong>AI Analysis:</strong> Our machine learning model analyzes your traditional and non-traditional data points.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-icon">📊</span>
+                    <div>
+                        <strong>Report Generation:</strong> A comprehensive visual report with explainable AI insights is created.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-icon">👨‍💼</span>
+                    <div>
+                        <strong>Officer Review:</strong> A loan officer reviews your application with the AI-generated dashboard.
+                    </div>
+                </li>
+                <li>
+                    <span class="step-icon">📧</span>
+                    <div>
+                        <strong>Decision Notification:</strong> You'll receive an email with the decision, typically within 24-48 hours.
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="actions">
+            <a href="{{ url_for('home') }}" class="btn btn-primary">Return to Home</a>
+            <a href="{{ url_for('applicant_logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+
+        <p style="margin-top: 2rem; color: var(--text-light); font-size: 0.9rem;">
+            Check your email for updates on your application status.
+        </p>
+    </div>
+</div>
+{% endblock %}
